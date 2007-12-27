@@ -62,10 +62,10 @@ Epoch:		3
 License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://www.kernel.org/pub/linux/kernel/v2.6/linux-%{_basever}.tar.bz2
-# Source0-md5:	2e230d005c002fb3d38a3ca07c0200d0
+# Source0-md5:	296a6d150d260144639c3664d127d174
 %if "%{_postver}" != "%{nil}"
 Source1:	http://www.kernel.org/pub/linux/kernel/v2.6/patch-%{_basever}%{_postver}.bz2
-# Source1-md5:	8dc6d14fb270d13e8ef670d23387b418
+# Source1-md5:	090f582d2a0e1951d500b2e55f7df7b4
 %endif
 
 Source2:	kernel-xen-module-build.pl
