@@ -110,6 +110,8 @@ f.close()
 if not rc == 0:
     sys.exit(1)
 
+dict[i] = ""
+i += 1
 dict[i] = "#"
 i += 1
 dict[i] = "# New symbols"
@@ -170,5 +172,14 @@ for symbol in dict.keys():
 
     # blacklist
     # TODO: use some list here instead
-    if symbol != "LOCALVERSION" and symbol != "DEFCONFIG_LIST":
-        print "%s %s" % (symbol, s.strip())
+    if symbol != "LOCALVERSION":
+        # .specs updates this
+        continue
+    if symbol != "DEFCONFIG_LIST":
+        # seems wrong
+        continue
+    if symbol != "MATH_EMULATION":
+        # .spec keeps updating this
+        continue
+
+    print "%s %s" % (symbol, s.strip())
