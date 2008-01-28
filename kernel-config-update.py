@@ -73,6 +73,7 @@ dict = odict()
 
 rc = 0
 f = open(kernelconfig, 'r')
+i = 0;
 for l in f:
     if l[:6] == 'CONFIG_':
         print "Omit CONFIG_ when specifing symbol name: %s" % l
@@ -80,6 +81,8 @@ for l in f:
         continue
 
     if re.match('^#', l) or re.match('^\s*$', l):
+        dict[i] = l.strip()
+        i = i + 1
         continue
 
     if not re.match('^[0-9A-Z]+', l):
@@ -107,6 +110,13 @@ f.close()
 if not rc == 0:
     sys.exit(1)
 
+dict[i] = "#"
+i += 1
+dict[i] = "# New symbols"
+i += 1
+dict[i] = "#"
+i += 1
+
 f = open(inconfig, 'r')
 for l in f:
     # yes, module and string, numeric values
@@ -123,7 +133,7 @@ for l in f:
 
     # other data. perhaps comments
     if m == None:
-        print l.strip()
+#        print l.strip()
         continue
 
     if dict.has_key(symbol):
@@ -136,31 +146,29 @@ for l in f:
             c['all'] = value # actualy same value
         else:
             c[arch] = value # actually same value
-
-        s = ''
-        for k in c.keys():
-            s += ' %s=%s' % (k, c[k])
-
-        l = "%s %s" % (symbol, s.strip())
-        del dict[symbol]
+        dict[symbol] = c
     else:
         # new symbol gets by default assigned to all
-        l = "%s all=%s" % (symbol, value)
+        c = {}
+        c['all'] = value
+        dict[symbol] = c
+#        dict[symbol] = ('all', value)
+
+
+f.close()
+
+for symbol in dict.keys():
+    c = dict[symbol]
+#    print "s=%s, c=%s" % (type(symbol), type(c))
+    if type(symbol) == int:
+        print c
+        continue
+
+    s = ''
+    for k in c.keys():
+        s += ' %s=%s' % (k, c[k])
 
     # blacklist
     # TODO: use some list here instead
     if symbol != "LOCALVERSION" and symbol != "DEFCONFIG_LIST":
-        print l
-
-f.close()
-
-# print out remaining items from old dictionary
-print "#"
-print "# Nonexistent symbols"
-print "#"
-for symbol in dict.keys():
-    s = ''
-    c = dict[symbol]
-    for k in c.keys():
-        s += ' %s=%s' % (k, c[k])
-    print "%s %s" % (symbol, s.strip())
+        print "%s %s" % (symbol, s.strip())
