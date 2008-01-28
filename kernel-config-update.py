@@ -130,11 +130,12 @@ for l in f:
         c = dict[symbol]
         if c.has_key('all') and c.has_key(arch):
             c[arch] = value
-            # TODO: convert all to other arches
-        if c.has_key('all'):
-            c['all'] = value
-        else:
+        elif c.has_key('all') and c['all'] != value:
             c[arch] = value
+        elif c.has_key('all'):
+            c['all'] = value # actualy same value
+        else:
+            c[arch] = value # actually same value
 
         s = ''
         for k in c.keys():
