@@ -130,6 +130,7 @@ for l in f:
         c = dict[symbol]
         if c.has_key('all') and c.has_key(arch):
             c[arch] = value
+            # TODO: convert all to other arches
         if c.has_key('all'):
             c['all'] = value
         else:
@@ -142,7 +143,8 @@ for l in f:
         l = "%s %s" % (symbol, s.strip())
         del dict[symbol]
     else:
-        l = "%s %s=%s" % (symbol, arch, value)
+        # new symbol gets by default assigned to all
+        l = "%s all=%s" % (symbol, value)
 
     # blacklist
     # TODO: use some list here instead
@@ -152,6 +154,9 @@ for l in f:
 f.close()
 
 # print out remaining items from old dictionary
+print "#"
+print "# Nonexistent symbols"
+print "#"
 for symbol in dict.keys():
     s = ''
     c = dict[symbol]
