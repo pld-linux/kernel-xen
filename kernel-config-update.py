@@ -172,13 +172,13 @@ for symbol in dict.keys():
 
     # blacklist
     # TODO: use some list here instead
-    if symbol != "LOCALVERSION":
+    if symbol == "LOCALVERSION":
         # .specs updates this
         continue
-    if symbol != "DEFCONFIG_LIST":
+    if symbol == "DEFCONFIG_LIST":
         # seems wrong
         continue
-    if symbol != "MATH_EMULATION":
+    if symbol == "MATH_EMULATION":
         # .spec keeps updating this
         continue
 
