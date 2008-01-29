@@ -149,20 +149,16 @@ for symbol in dotdict.keys():
     if dict.has_key(symbol):
         c = dict[symbol]
         # if we have arch key, we use regardless there's 'all' present
-        if c.has_key('all') and c.has_key(arch):
+        if c.has_key(arch):
             c[arch] = value
         elif c.has_key('all') and c['all'] != value:
             # turn 'all' to separate arch values
             for a in allarch:
                 c[a] = c['all']
             del c['all']
-
             # new value from this arch
             c[arch] = value
-        elif c.has_key('all'):
-            c['all'] = value # actualy same value
-        else:
-            c[arch] = value # actually same value
+
         dict[symbol] = c
     else:
         # new symbol gets by default assigned to all
