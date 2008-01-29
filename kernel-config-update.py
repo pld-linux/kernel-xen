@@ -12,8 +12,8 @@ if len(sys.argv) != 4:
     sys.exit(1)
 
 arch = sys.argv[1]
-kernelconfig = sys.argv[2]
-inconfig = sys.argv[3]
+kernelconf = sys.argv[2]
+dotconfig = sys.argv[3]
 
 from UserDict import UserDict
 
@@ -72,8 +72,9 @@ class odict(UserDict):
 dict = odict()
 
 rc = 0
-f = open(kernelconfig, 'r')
+f = open(kernelconf, 'r')
 i = 0;
+allarch = {}
 for l in f:
     if l[:6] == 'CONFIG_':
         print "Omit CONFIG_ when specifing symbol name: %s" % l
@@ -100,28 +101,24 @@ for l in f:
     conf = dict[symbol] = odict()
     for item in c[1:]:
         (key, value) = item.split('=')
+        if not allarch.has_key(key):
+            allarch[key] = 1
         dict[symbol][key] = value
 
 #    print "Add symbol: %s = %s" % (symbol, dict[symbol])
 
 f.close()
+del allarch['all']
 #rc =1
 
 if not rc == 0:
     sys.exit(1)
 
-dict[i] = ""
-i += 1
-dict[i] = "#"
-i += 1
-dict[i] = "# New symbols"
-i += 1
-dict[i] = "#"
-i += 1
-
-f = open(inconfig, 'r')
+# read keys from .config
+f = open(dotconfig, 'r')
+dotdict = {}
 for l in f:
-    # yes, module and string, numeric values
+    # 'y'es, 'm'odule and string, numeric values
     m = re.match("^CONFIG_(.*)=(.*)$", l)
     if not m == None:
         symbol = m.group(1)
@@ -132,17 +129,35 @@ for l in f:
         if not m == None:
             symbol = m.group(1)
             value = "n"
-
-    # other data. perhaps comments
+    # other irrelevant data
     if m == None:
-#        print l.strip()
         continue
+    dotdict[symbol] = value
+f.close()
 
+dict[i] = ""
+i += 1
+dict[i] = "#"
+i += 1
+dict[i] = "# New symbols"
+i += 1
+dict[i] = "#"
+i += 1
+
+for symbol in dotdict.keys():
+    value = dotdict[symbol]
     if dict.has_key(symbol):
         c = dict[symbol]
+        # if we have arch key, we use regardless there's 'all' present
         if c.has_key('all') and c.has_key(arch):
             c[arch] = value
         elif c.has_key('all') and c['all'] != value:
+            # turn 'all' to separate arch values
+            for a in allarch:
+                c[a] = c['all']
+            del c['all']
+
+            # new value from this arch
             c[arch] = value
         elif c.has_key('all'):
             c['all'] = value # actualy same value
@@ -155,10 +170,9 @@ for l in f:
         c['all'] = value
         dict[symbol] = c
 #        dict[symbol] = ('all', value)
-
-
 f.close()
 
+# printout time
 for symbol in dict.keys():
     c = dict[symbol]
 #    print "s=%s, c=%s" % (type(symbol), type(c))
@@ -166,6 +180,22 @@ for symbol in dict.keys():
         print c
         continue
 
+    # go over symbols which no longer present in .config
+    # and remove from our arch.
+    if not dotdict.has_key(symbol):
+        c = dict[symbol]
+        # if there's 'all' key, expand it to avalable arch list
+        if c.has_key('all'):
+            value = c['all']
+            for a in allarch:
+                if not c.has_key(a):
+                    c[a] = value
+            del c['all']
+        if c.has_key(arch):
+            del c[arch]
+
+
+    # join arch=value into string back
     s = ''
     for k in c.keys():
         s += ' %s=%s' % (k, c[k])
@@ -174,9 +204,6 @@ for symbol in dict.keys():
     # TODO: use some list here instead
     if symbol == "LOCALVERSION":
         # .specs updates this
-        continue
-    if symbol == "DEFCONFIG_LIST":
-        # seems wrong
         continue
 #    if symbol == "MATH_EMULATION":
 #        # .spec keeps updating this
