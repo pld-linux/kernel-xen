@@ -178,8 +178,8 @@ for symbol in dict.keys():
     if symbol == "DEFCONFIG_LIST":
         # seems wrong
         continue
-    if symbol == "MATH_EMULATION":
-        # .spec keeps updating this
-        continue
+#    if symbol == "MATH_EMULATION":
+#        # .spec keeps updating this
+#        continue
 
     print "%s %s" % (symbol, s.strip())
