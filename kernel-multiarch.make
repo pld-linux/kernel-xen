@@ -1,8 +1,12 @@
+CONFIGS :=
+CONFIG_NODEP :=
+MAKE_OPTS :=
+
 include multiarch.make
 
 # multiarch kernel makefile
 all modules_install mrproper:
-	$(Q)$(MAKE) -C $(srctree) HOSTCC="ccache i686-pld-linux-gcc" HOSTCFLAGS="-Wall -Wstrict-prototypes -O2 -march=i686  -fomit-frame-pointer" O=/home/glen/rpm/pld/BUILD/kernel-vanilla-2.6.24/o CC="ccache i686-pld-linux-gcc" $<
+	$(Q)$(MAKE) -C $(srctree) $(MAKE_OPTS) $<
 
 pykconfig: $(objtree)/.config.conf
 	@echo 'pykconfig is up to date'
