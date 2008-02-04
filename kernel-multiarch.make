@@ -12,7 +12,7 @@ all modules_install mrproper:
 pykconfig: $(objtree)/.config.conf
 	@echo 'pykconfig is up to date'
 
-$(objtree)/.config.conf: $(srctree)/arch/$(SRCARCH)/defconfig
+$(objtree)/.config.conf: $(objtree)/.config
 	@echo '  kernel-config-update.py $(ARCH) arch/$(SRCARCH)/defconfig.conf $< > $@'
 	$(Q)$(PYTHON) $(objtree)/scripts/kernel-config-update.py $(ARCH) $(srctree)/arch/$(SRCARCH)/defconfig.conf $< > .config.conf.tmp
 	$(Q)mv .config.conf.tmp $@
