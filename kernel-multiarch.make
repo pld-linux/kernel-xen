@@ -6,8 +6,10 @@ PYTHON := python
 include multiarch.make
 
 # multiarch kernel makefile
-all modules_install mrproper:
+all modules_install mrproper: $(objtree)/.config
 	$(Q)$(MAKE) -C $(srctree) $(MAKE_OPTS) $<
+
+$(objtree)/.config: $(srctree)/arch/$(SRCARCH)/defconfig
 
 pykconfig: $(objtree)/.config.conf
 	@echo 'pykconfig is up to date'
