@@ -1,6 +1,7 @@
 CONFIGS :=
 CONFIG_NODEP :=
 MAKE_OPTS :=
+PYTHON := python
 
 include multiarch.make
 
@@ -13,13 +14,13 @@ pykconfig: $(objtree)/.config.conf
 
 $(objtree)/.config.conf: $(srctree)/arch/$(SRCARCH)/defconfig
 	@echo '  kernel-config-update.py $(ARCH) arch/$(SRCARCH)/defconfig.conf $< > $@'
-	$(Q)$(objtree)/scripts/kernel-config-update.py $(ARCH) $(srctree)/arch/$(SRCARCH)/defconfig.conf $< > .config.conf.tmp
+	$(Q)$(PYTHON) $(objtree)/scripts/kernel-config-update.py $(ARCH) $(srctree)/arch/$(SRCARCH)/defconfig.conf $< > .config.conf.tmp
 	$(Q)mv .config.conf.tmp $@
 
 $(srctree)/arch/$(SRCARCH)/defconfig: $(srctree)/arch/$(SRCARCH)/defconfig.conf
 	@echo '  kernel-config.py $(ARCH) $< $@'
 	$(Q)> .defconfig.tmp
-	$(Q)$(objtree)/scripts/kernel-config.py $(ARCH) $< .defconfig.tmp
+	$(Q)$(PYTHON) $(objtree)/scripts/kernel-config.py $(ARCH) $< .defconfig.tmp
 	$(Q)mv .defconfig.tmp $@
 	$(Q)ln -sf $@ $(objtree)/.config
 
