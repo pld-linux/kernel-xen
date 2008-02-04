@@ -6,7 +6,7 @@ PYTHON := python
 include multiarch.make
 
 # multiarch kernel makefile
-all modules_install mrproper: $(objtree)/.config
+all modules_install mrproper:
 	$(Q)$(MAKE) -C $(srctree) $(MAKE_OPTS) $<
 
 $(objtree)/.config: $(srctree)/arch/$(SRCARCH)/defconfig
