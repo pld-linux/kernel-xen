@@ -92,12 +92,23 @@ for l in f:
 
     c = l.strip().split()
     symbol = c[0]
+
+    # inline symbol: for current arch, may override config one
+    if symbol.find('=') > 0:
+        (symbol, value) = symbol.split('=')
+
+        if not dict.has_key(symbol):
+            dict[symbol] = odict()
+
+        dict[symbol][arch] = value
+        continue
+
     if dict.has_key(symbol):
         sys.stderr.write("Duplicate symbol: %s\n" % symbol)
         rc = 1
         continue
 
-    conf = dict[symbol] = odict()
+    dict[symbol] = odict()
     for item in c[1:]:
         (key, value) = item.split('=')
         if not allarch.has_key(key):
