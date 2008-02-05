@@ -188,6 +188,7 @@ for symbol in dict.keys():
     c = dict[symbol]
 #    sys.stderr.write("s=%s, c=%s\n" % (type(symbol), type(c)))
     if type(symbol) == int:
+        # comments
         print c
         continue
 
@@ -195,26 +196,16 @@ for symbol in dict.keys():
     # and remove from our arch.
     if not dotdict.has_key(symbol):
         c = dict[symbol]
-        # if there's 'all' key, expand it to available arch list
-        if c.has_key('all'):
-            value = c['all']
-            for a in allarch:
-                if not c.has_key(a):
-                    c[a] = value
-            del c['all']
-        if c.has_key(arch):
-            del c[arch]
+        if c.has_key('all') or c.has_key(arch):
+            c[arch] = ''
 
     # blacklist
     # TODO: use some list here instead
     if symbol == "LOCALVERSION":
         # .specs updates this
         continue
-#    if symbol == "MATH_EMULATION":
-#        # .spec keeps updating this
-#        continue
 
-    # join arch=value into string back
+    # join arch=value back into string
     s = ''
     for k in c.keys():
         s += ' %s=%s' % (k, c[k])
