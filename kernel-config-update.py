@@ -156,18 +156,17 @@ i += 1
 dict[i] = "#"
 i += 1
 
+# compare kernel.conf and .config
+# add new items to kernel.conf
 for symbol in dotdict.keys():
     value = dotdict[symbol]
     if dict.has_key(symbol):
         c = dict[symbol]
+
         # if we have arch key, we use regardless there's 'all' present
         if c.has_key(arch):
             c[arch] = value
         elif c.has_key('all') and c['all'] != value:
-            # turn 'all' to separate arch values
-            for a in allarch:
-                c[a] = c['all']
-            del c['all']
             # new value from this arch
             c[arch] = value
         elif not c.has_key('all'):
@@ -176,11 +175,10 @@ for symbol in dotdict.keys():
 
         dict[symbol] = c
     else:
-        # new symbol gets by default assigned to all
+        # new symbol gets by default assigned to 'all'
         c = {}
         c['all'] = value
         dict[symbol] = c
-#        dict[symbol] = ('all', value)
 f.close()
 
 # printout time
