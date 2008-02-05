@@ -5,31 +5,38 @@ PYTHON := python
 
 include multiarch.make
 
-# multiarch kernel makefile
-all modules_install mrproper:
-	$(Q)$(MAKE) -C $(srctree) $(MAKE_OPTS) $<
+DEFCONFIG := $(KERNELSRC)/arch/$(SRCARCH)/configs/pld_defconfig
+KCONFIG   := $(KERNELOUTPUT)/.config
 
-$(objtree)/.config: $(srctree)/arch/$(SRCARCH)/defconfig
+kernel-config			:= $(KERNELOUTPUT)/scripts/kernel-config.py
+kernel-config-update	:= $(KERNELOUTPUT)/scripts/kernel-config-update.py
 
-pykconfig: $(objtree)/.config.conf
-	@echo 'pykconfig is up to date'
+all := $(filter-out all Makefile,$(MAKECMDGOALS))
 
-$(objtree)/.config.conf: $(objtree)/.config $(objtree)/scripts/kernel-config-update.py
-	@echo '  kernel-config-update.py $(ARCH) arch/$(SRCARCH)/defconfig.conf $< > $@'
-	$(Q)$(PYTHON) $(objtree)/scripts/kernel-config-update.py $(ARCH) $(srctree)/arch/$(SRCARCH)/defconfig.conf $< > .config.conf.tmp
-	$(Q)mv .config.conf.tmp $@
+all:
+	$(MAKE) -C $(KERNELSRC) O=$(KERNELOUTPUT) $(MAKE_OPTS) $(all)
 
-$(srctree)/arch/$(SRCARCH)/defconfig: $(srctree)/arch/$(SRCARCH)/defconfig.conf $(objtree)/scripts/kernel-config.py
+$(KCONFIG): $(DEFCONFIG)
+
+pykconfig: $(KERNELOUTPUT)/kernel.conf
+	@echo '  $@ is up to date'
+
+$(KERNELOUTPUT)/kernel.conf: $(KCONFIG) $(kernel-config-update)
+	@echo '  kernel-config-update.py $(ARCH) $(KERNELOUTPUT)/.kernel.conf $< > $@'
+	$(Q)$(PYTHON) $(kernel-config-update) $(ARCH) $(KERNELOUTPUT)/.kernel.conf $< > .kernel.conf.tmp
+	$(Q)mv .kernel.conf.tmp $@
+
+$(DEFCONFIG): $(KERNELOUTPUT)/.kernel.conf $(kernel-config)
 	@echo '  kernel-config.py $(ARCH) $< $@'
 	$(Q)> .defconfig.tmp
-	$(Q)$(PYTHON) $(objtree)/scripts/kernel-config.py $(ARCH) $< .defconfig.tmp
+	$(Q)$(PYTHON) $(kernel-config) $(ARCH) $< .defconfig.tmp
 	$(Q)mv .defconfig.tmp $@
-	$(Q)ln -sf $@ $(objtree)/.config
+	$(Q)ln -sf $@ $(KCONFIG)
 
-$(srctree)/arch/$(SRCARCH)/defconfig.conf: $(CONFIGS) $(objtree)/defconfig-nodep.conf
+$(KERNELOUTPUT)/.kernel.conf: $(CONFIGS) $(KERNELOUTPUT)/.kernel-nodep.conf
 	$(Q)cat $^ > $@
 
-$(objtree)/defconfig-nodep.conf: $(CONFIG_NODEP)
+$(KERNELOUTPUT)/.kernel-nodep.conf: $(CONFIG_NODEP)
 	$(Q)if [ ! -f $@ ] || ! cmp -s $< $@; then \
 		echo '  cat $< > $@'; \
 		cat $< > $@; \
