@@ -6,6 +6,7 @@
 
 import sys
 import re
+from UserDict import UserDict
 
 if len(sys.argv) != 4:
     print "Usage: %s target_arch kernel.conf .config" % sys.argv[0]
@@ -14,8 +15,6 @@ if len(sys.argv) != 4:
 arch = sys.argv[1]
 kernelconf = sys.argv[2]
 dotconfig = sys.argv[3]
-
-from UserDict import UserDict
 
 # odict (Ordered Dict) from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/107747
 class odict(UserDict):
@@ -77,7 +76,7 @@ i = 0;
 allarch = {}
 for l in f:
     if l[:6] == 'CONFIG_':
-        print "Omit CONFIG_ when specifing symbol name: %s" % l
+        sys.stderr.write("Omit CONFIG_ when specifing symbol name: %s\n" % l)
         rc = 1
         continue
 
@@ -87,14 +86,14 @@ for l in f:
         continue
 
     if not re.match('^[0-9A-Z]+', l):
-        print "Unknown line: %s" % l
+        sys.stderr.write("Unknown line: %s\n" % l)
         rc = 1
         continue
 
     c = l.strip().split()
     symbol = c[0]
     if dict.has_key(symbol):
-        print "Duplicate symbol: %s" % symbol
+        sys.stderr.write("Duplicate symbol: %s\n" % symbol)
         rc = 1
         continue
 
@@ -105,11 +104,10 @@ for l in f:
             allarch[key] = 1
         dict[symbol][key] = value
 
-#    print "Add symbol: %s=%s" % (symbol, dict[symbol])
+#    sys.stderr.write("Add symbol: %s=%s\n" % (symbol, dict[symbol]))
 
 f.close()
 del allarch['all']
-#rc =1
 
 if not rc == 0:
     sys.exit(1)
@@ -134,7 +132,7 @@ for l in f:
         continue
 
     dotdict[symbol] = value
-#    print "Add .config symbol: %s=%s" % (symbol, dotdict[symbol])
+#    sys.stderr.write("Add .config symbol: %s=%s\n" % (symbol, dotdict[symbol]))
 
 f.close()
 
@@ -177,7 +175,7 @@ f.close()
 # printout time
 for symbol in dict.keys():
     c = dict[symbol]
-#    print "s=%s, c=%s" % (type(symbol), type(c))
+#    sys.stderr.write("s=%s, c=%s\n" % (type(symbol), type(c)))
     if type(symbol) == int:
         print c
         continue
