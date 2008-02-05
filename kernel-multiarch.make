@@ -19,7 +19,7 @@ $(objtree)/.config.conf: $(objtree)/.config
 	$(Q)$(PYTHON) $(objtree)/scripts/kernel-config-update.py $(ARCH) $(srctree)/arch/$(SRCARCH)/defconfig.conf $< > .config.conf.tmp
 	$(Q)mv .config.conf.tmp $@
 
-$(srctree)/arch/$(SRCARCH)/defconfig: $(srctree)/arch/$(SRCARCH)/defconfig.conf
+$(srctree)/arch/$(SRCARCH)/defconfig: $(srctree)/arch/$(SRCARCH)/defconfig.conf $(objtree)/scripts/kernel-config.py
 	@echo '  kernel-config.py $(ARCH) $< $@'
 	$(Q)> .defconfig.tmp
 	$(Q)$(PYTHON) $(objtree)/scripts/kernel-config.py $(ARCH) $< .defconfig.tmp
