@@ -193,17 +193,17 @@ for symbol in dict.keys():
 
     # go over symbols which no longer present in .config
     # and remove from our arch.
-#    if not dotdict.has_key(symbol):
-#        c = dict[symbol]
-#        # if there's 'all' key, expand it to avalable arch list
-#        if c.has_key('all'):
-#            value = c['all']
-#            for a in allarch:
-#                if not c.has_key(a):
-#                    c[a] = value
-#            del c['all']
-#        if c.has_key(arch):
-#            del c[arch]
+    if not dotdict.has_key(symbol):
+        c = dict[symbol]
+        # if there's 'all' key, expand it to available arch list
+        if c.has_key('all'):
+            value = c['all']
+            for a in allarch:
+                if not c.has_key(a):
+                    c[a] = value
+            del c['all']
+        if c.has_key(arch):
+            del c[arch]
 
     # blacklist
     # TODO: use some list here instead
