@@ -161,7 +161,7 @@ for symbol in dotdict.keys():
             del c['all']
             # new value from this arch
             c[arch] = value
-        else:
+        elif not c.has_key('all'):
             # symbol present in config.conf, but without our arch, add our value
             c[arch] = value
 
