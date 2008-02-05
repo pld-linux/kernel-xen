@@ -14,7 +14,7 @@ $(objtree)/.config: $(srctree)/arch/$(SRCARCH)/defconfig
 pykconfig: $(objtree)/.config.conf
 	@echo 'pykconfig is up to date'
 
-$(objtree)/.config.conf: $(objtree)/.config
+$(objtree)/.config.conf: $(objtree)/.config $(objtree)/scripts/kernel-config-update.py
 	@echo '  kernel-config-update.py $(ARCH) arch/$(SRCARCH)/defconfig.conf $< > $@'
 	$(Q)$(PYTHON) $(objtree)/scripts/kernel-config-update.py $(ARCH) $(srctree)/arch/$(SRCARCH)/defconfig.conf $< > .config.conf.tmp
 	$(Q)mv .config.conf.tmp $@
@@ -34,3 +34,5 @@ $(objtree)/defconfig-nodep.conf: $(CONFIG_NODEP)
 		echo '  cat $< > $@'; \
 		cat $< > $@; \
 	fi
+
+# vim:ft=make
