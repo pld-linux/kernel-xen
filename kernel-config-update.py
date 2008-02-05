@@ -196,12 +196,6 @@ for symbol in dict.keys():
 #        if c.has_key(arch):
 #            del c[arch]
 
-
-    # join arch=value into string back
-    s = ''
-    for k in c.keys():
-        s += ' %s=%s' % (k, c[k])
-
     # blacklist
     # TODO: use some list here instead
     if symbol == "LOCALVERSION":
@@ -210,5 +204,10 @@ for symbol in dict.keys():
 #    if symbol == "MATH_EMULATION":
 #        # .spec keeps updating this
 #        continue
+
+    # join arch=value into string back
+    s = ''
+    for k in c.keys():
+        s += ' %s=%s' % (k, c[k])
 
     print "%s %s" % (symbol, s.strip())
