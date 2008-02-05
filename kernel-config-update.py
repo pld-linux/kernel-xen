@@ -105,7 +105,7 @@ for l in f:
             allarch[key] = 1
         dict[symbol][key] = value
 
-#    print "Add symbol: %s = %s" % (symbol, dict[symbol])
+#    print "Add symbol: %s=%s" % (symbol, dict[symbol])
 
 f.close()
 del allarch['all']
@@ -132,7 +132,10 @@ for l in f:
     # other irrelevant data
     if m == None:
         continue
+
     dotdict[symbol] = value
+#    print "Add .config symbol: %s=%s" % (symbol, dotdict[symbol])
+
 f.close()
 
 dict[i] = ""
@@ -157,6 +160,9 @@ for symbol in dotdict.keys():
                 c[a] = c['all']
             del c['all']
             # new value from this arch
+            c[arch] = value
+        else:
+            # symbol present in config.conf, but without our arch, add our value
             c[arch] = value
 
         dict[symbol] = c
