@@ -5,7 +5,7 @@ PYTHON := python
 
 include multiarch.make
 
-DEFCONFIG := $(KERNELSRC)/arch/$(SRCARCH)/configs/pld_defconfig
+DEFCONFIG := $(KERNELOUTPUT)/pld_defconfig
 KCONFIG   := $(KERNELOUTPUT)/.config
 
 kernel-config			:= $(KERNELOUTPUT)/scripts/kernel-config.py
