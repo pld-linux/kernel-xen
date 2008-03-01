@@ -118,7 +118,10 @@ for l in f:
 #    sys.stderr.write("Add symbol: %s=%s\n" % (symbol, dict[symbol]))
 
 f.close()
-del allarch['all']
+
+# not really an arch :)
+if allarch.has_key('all'):
+	del allarch['all']
 
 if not rc == 0:
     sys.exit(1)
