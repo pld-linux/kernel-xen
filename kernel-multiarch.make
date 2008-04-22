@@ -2,14 +2,15 @@ CONFIGS :=
 CONFIG_NODEP :=
 MAKE_OPTS :=
 PYTHON := python
+SCRIPTSDIR := .
 
-include multiarch.make
+include $(TARGETOBJ).mk
 
 DEFCONFIG := $(KERNELOUTPUT)/pld_defconfig
 KCONFIG   := $(KERNELOUTPUT)/.config
 
-kernel-config			:= $(KERNELOUTPUT)/scripts/kernel-config.py
-kernel-config-update	:= $(KERNELOUTPUT)/scripts/kernel-config-update.py
+kernel-config			:= $(SCRIPTSDIR)/kernel-config.py
+kernel-config-update	:= $(SCRIPTSDIR)/kernel-config-update.py
 
 all := $(filter-out all Makefile,$(MAKECMDGOALS))
 
