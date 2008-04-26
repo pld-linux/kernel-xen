@@ -568,6 +568,15 @@ if [ "$1" = "0" ]; then
 	fi
 fi
 
+%triggerin module-build -- %{name} = %{epoch}:%{version}-%{release}
+ln -sfn %{_kernelsrcdir} /lib/modules/%{kernel_release}/build
+ln -sfn %{_kernelsrcdir} /lib/modules/%{kernel_release}/source
+
+%triggerun module-build -- %{name} = %{epoch}:%{version}-%{release}
+if [ "$1" = "0" ]; then
+	rm -f /lib/modules/%{kernel_release}/{build,source}
+fi
+
 %files
 %defattr(644,root,root,755)
 /boot/vmlinuz-%{kernel_release}
