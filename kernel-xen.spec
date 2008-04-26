@@ -57,6 +57,7 @@ Source23:	kernel-xen-netfilter.config
 Source24:	kernel-xen-xen.config
 # from xen-unstable.hg
 Patch0:		kernel-xen-xen.patch
+Patch1:		kernel-PATH_MAX.patch
 URL:		http://www.kernel.org/
 BuildRequires:	binutils >= 3:2.14.90.0.7
 BuildRequires:	gcc >= 5:3.2
@@ -336,6 +337,7 @@ sed -i -e '/select INPUT/d' net/bluetooth/hidp/Kconfig
 find . '(' -name '*~' -o -name '*.orig' -o -name '.gitignore' ')' -print0 | xargs -0 -r -l512 rm -f
 
 %patch0 -p1
+%patch1 -p1
 
 %build
 TuneUpConfigForIX86 () {
