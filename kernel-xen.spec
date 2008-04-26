@@ -2,7 +2,7 @@
 # TODO:
 # - port grsec_minimal
 # - legal stuff ( http://www.xensource.com/Pages/legal.aspx )
-# 
+#
 # Status:
 # - dom0 boots
 # - domU doesn't
@@ -24,24 +24,6 @@
 %define		have_oss	1
 %define		have_sound	1
 
-## Program required by kernel to work.
-%define		_binutils_ver		2.12.1
-%define		_util_linux_ver		2.10o
-%define		_module_init_tool_ver	0.9.10
-%define		_e2fsprogs_ver		1.29
-%define		_jfsutils_ver		1.1.3
-%define		_reiserfsprogs_ver	3.6.3
-%define		_xfsprogs_ver		2.6.0
-%define		_pcmcia_cs_ver		3.1.21
-%define		_pcmciautils_ver	004
-%define		_quota_tools_ver	3.09
-%define		_ppp_ver		1:2.4.0
-%define		_isdn4k_utils_ver	3.1pre1
-%define		_nfs_utils_ver		1.0.5
-%define		_procps_ver		3.2.0
-%define		_oprofile_ver		0.9
-%define		_udev_ver		071
-
 %define		xen_version		3.2.0
 
 %define		alt_kernel	xen
@@ -53,6 +35,7 @@
 
 Summary:	The Linux kernel (the core of the Linux operating system)
 Summary(de.UTF-8):	Der Linux-Kernel (Kern des Linux-Betriebssystems)
+Summary(et.UTF-8):	Linuxi kernel (ehk operatsioonisüsteemi tuum)
 Summary(fr.UTF-8):	Le Kernel-Linux (La partie centrale du systeme)
 Summary(pl.UTF-8):	Jądro Linuksa
 Name:		kernel-%{alt_kernel}
@@ -63,14 +46,10 @@ License:	GPL v2
 Group:		Base/Kernel
 Source0:	http://www.kernel.org/pub/linux/kernel/v2.6/linux-%{_basever}.tar.bz2
 # Source0-md5:	296a6d150d260144639c3664d127d174
-%if "%{_postver}" != "%{nil}"
 Source1:	http://www.kernel.org/pub/linux/kernel/v2.6/patch-%{_basever}%{_postver}.bz2
 # Source1-md5:	090f582d2a0e1951d500b2e55f7df7b4
-%endif
-
 Source2:	kernel-xen-module-build.pl
 Source3:	kernel-xen-config.h
-
 Source20:	kernel-xen-common.config
 Source21:	kernel-xen-i386.config
 Source22:	kernel-xen-x86_64.config
@@ -88,32 +67,25 @@ BuildRequires:	perl-base
 BuildRequires:	rpmbuild(macros) >= 1.379
 BuildRequires:	sed >= 4.0
 Autoreqprov:	no
+Requires:	/sbin/depmod
 Requires:	coreutils
 Requires:	geninitrd >= 2.57
 Requires:	module-init-tools >= 0.9.9
-Provides:	%{name}-up = %{epoch}:%{version}-%{release}
-Provides:	kernel = %{epoch}:%{version}-%{release}
-Provides:	kernel(realtime-lsm) = 0.1.1
+Provides:	%{name}(vermagic) = %{kernel_release}
 Provides:	kernel(xen0) = %{xen_version}
-Provides:	kernel-misc-fuse
-Provides:	kernel-net-hostap = 0.4.4
-Provides:	kernel-net-ieee80211
-Provides:	kernel-net-ipw2100 = 1.1.3
-Provides:	kernel-net-ipw2200 = 1.0.8
-Provides:	module-info
-Conflicts:	e2fsprogs < %{_e2fsprogs_ver}
-Conflicts:	isdn4k-utils < %{_isdn4k_utils_ver}
-Conflicts:	jfsutils < %{_jfsutils_ver}
-Conflicts:	module-init-tool < %{_module_init_tool_ver}
-Conflicts:	nfs-utils < %{_nfs_utils_ver}
-Conflicts:	oprofile < %{_oprofile_ver}
-Conflicts:	ppp < %{_ppp_ver}
-Conflicts:	procps < %{_procps_ver}
-Conflicts:	quota-tools < %{_quota_tools_ver}
-Conflicts:	reiserfsprogs < %{_reiserfsprogs_ver}
-Conflicts:	udev < %{_udev_ver}
-Conflicts:	util-linux < %{_util_linux_ver}
-Conflicts:	xfsprogs < %{_xfsprogs_ver}
+Conflicts:	e2fsprogs < 1.29
+Conflicts:	isdn4k-utils < 3.1pre1
+Conflicts:	jfsutils < 1.1.3
+Conflicts:	module-init-tools < 0.9.10
+Conflicts:	nfs-utils < 1.0.5
+Conflicts:	oprofile < 0.9
+Conflicts:	ppp < 1:2.4.0
+Conflicts:	procps < 3.2.0
+Conflicts:	quota-tools < 3.09
+Conflicts:	reiserfsprogs < 3.6.3
+Conflicts:	udev < 1:071
+Conflicts:	util-linux < 2.10o
+Conflicts:	xfsprogs < 2.6.0
 ExclusiveArch:	%{ix86} %{x8664}
 ExcludeArch:	i386 i486 i586
 ExclusiveOS:	Linux
@@ -121,6 +93,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # No ELF objects there to strip (skips processing 27k files)
 %define		_noautostrip	.*%{_kernelsrcdir}/.*
+%define		_noautochrpath	.*%{_kernelsrcdir}/.*
 
 %define		initrd_dir	/boot
 
@@ -188,49 +161,43 @@ Summary:	DRM kernel modules
 Summary(de.UTF-8):	DRM Kernel Treiber
 Summary(pl.UTF-8):	Sterowniki DRM
 Group:		Base/Kernel
-Requires(postun):	%{name}-up = %{epoch}:%{version}-%{release}
-Requires:	%{name}-up = %{epoch}:%{version}-%{release}
-Provides:	kernel-drm = %{drm_xfree_version}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 Autoreqprov:	no
 
 %description drm
-DRM kernel modules (%{drm_xfree_version}).
+DRM kernel modules.
 
 %description drm -l de.UTF-8
-DRM Kernel Treiber (%{drm_xfree_version}).
+DRM Kernel Treiber.
 
 %description drm -l pl.UTF-8
-Sterowniki DRM (%{drm_xfree_version}).
+Sterowniki DRM.
 
 %package pcmcia
 Summary:	PCMCIA modules
 Summary(de.UTF-8):	PCMCIA Module
 Summary(pl.UTF-8):	Moduły PCMCIA
 Group:		Base/Kernel
-Requires(postun):	%{name}-up = %{epoch}:%{version}-%{release}
-Requires:	%{name}-up = %{epoch}:%{version}-%{release}
-Provides:	kernel(pcmcia)
-Provides:	kernel-pcmcia = %{pcmcia_version}
-Conflicts:	pcmcia-cs < %{_pcmcia_cs_ver}
-Conflicts:	pcmciautils < %{_pcmciautils_ver}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
+Conflicts:	pcmcia-cs < 3.1.21
+Conflicts:	pcmciautils < 004
 Autoreqprov:	no
 
 %description pcmcia
-PCMCIA modules (%{pcmcia_version}).
+PCMCIA modules.
 
 %description pcmcia -l de.UTF-8
-PCMCIA Module (%{pcmcia_version})
+PCMCIA Module.
 
 %description pcmcia -l pl.UTF-8
-Moduły PCMCIA (%{pcmcia_version}).
+Moduły PCMCIA.
 
 %package sound-alsa
 Summary:	ALSA kernel modules
 Summary(de.UTF-8):	ALSA Kernel Module
 Summary(pl.UTF-8):	Sterowniki dźwięku ALSA
 Group:		Base/Kernel
-Requires(postun):	%{name}-up = %{epoch}:%{version}-%{release}
-Requires:	%{name}-up = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 Autoreqprov:	no
 
 %description sound-alsa
@@ -247,8 +214,7 @@ Summary:	OSS kernel modules
 Summary(de.UTF-8):	OSS Kernel Module
 Summary(pl.UTF-8):	Sterowniki dźwięku OSS
 Group:		Base/Kernel
-Requires(postun):	%{name}-up = %{epoch}:%{version}-%{release}
-Requires:	%{name}-up = %{epoch}:%{version}-%{release}
+Requires:	%{name} = %{epoch}:%{version}-%{release}
 Autoreqprov:	no
 
 %description sound-oss
@@ -265,11 +231,6 @@ Summary:	Header files for the Linux kernel
 Summary(de.UTF-8):	Header Dateien für den Linux-Kernel
 Summary(pl.UTF-8):	Pliki nagłówkowe jądra Linuksa
 Group:		Development/Building
-Provides:	kernel-headers = %{epoch}:%{version}-%{release}
-Provides:	kernel-headers(agpgart) = %{version}
-Provides:	kernel-headers(alsa-drivers)
-Provides:	kernel-headers(bridging) = %{version}
-Provides:	kernel-headers(reiserfs) = %{version}
 Autoreqprov:	no
 
 %description headers
@@ -279,7 +240,7 @@ building kernel modules.
 
 %description headers -l de.UTF-8
 Dies sind die C Header Dateien für den Linux-Kernel, die definierte
-Strukturen und Konstante beinhalten die beim rekompilieren des Kernels
+Strukturen und Konstante beinhalten, die beim rekompilieren des Kernels
 oder bei Kernel Modul kompilationen gebraucht werden.
 
 %description headers -l pl.UTF-8
@@ -292,7 +253,6 @@ Summary(de.UTF-8):	Development Dateien die beim Kernel Modul kompilationen gebra
 Summary(pl.UTF-8):	Pliki służące do budowania modułów jądra
 Group:		Development/Building
 Requires:	%{name}-headers = %{epoch}:%{version}-%{release}
-Provides:	kernel-module-build = %{epoch}:%{version}-%{release}
 Autoreqprov:	no
 
 %description module-build
@@ -313,14 +273,11 @@ Summary(de.UTF-8):	Der Kernel Quelltext
 Summary(pl.UTF-8):	Kod źródłowy jądra Linuksa
 Group:		Development/Building
 Requires:	%{name}-module-build = %{epoch}:%{version}-%{release}
-Provides:	kernel-source = %{epoch}:%{version}-%{release}
 Autoreqprov:	no
 
 %description source
-This is the source code for the Linux kernel. It is required to build
-most C programs as they depend on constants defined in here. You can
-also build a custom kernel that is better tuned to your particular
-hardware.
+This is the source code for the Linux kernel. You can build a custom
+kernel that is better tuned to your particular hardware.
 
 %description source -l de.UTF-8
 Das Kernel-Source-Packet enthält den source code (C/Assembler-Code)
@@ -346,12 +303,11 @@ Summary:	Kernel documentation
 Summary(de.UTF-8):	Kernel Dokumentation
 Summary(pl.UTF-8):	Dokumentacja do jądra Linuksa
 Group:		Documentation
-Provides:	kernel-doc = %{version}
 Autoreqprov:	no
 
 %description doc
 This is the documentation for the Linux kernel, as found in
-Documentation directory.
+/usr/src/linux/Documentation directory.
 
 %description doc -l de.UTF-8
 Dies ist die Kernel Dokumentation wie sie im 'Documentation'
@@ -359,7 +315,7 @@ Verzeichniss vorgefunden werden kann.
 
 %description doc -l pl.UTF-8
 Pakiet zawiera dokumentację do jądra Linuksa pochodzącą z katalogu
-Documentation.
+/usr/src/linux/Documentation.
 
 %prep
 %setup -q -n linux-%{_basever}
@@ -577,23 +533,17 @@ if [ -x /sbin/new-kernel-pkg ]; then
 fi
 
 %post
-mv -f /boot/vmlinuz-%{alt_kernel} /boot/vmlinuz-%{alt_kernel}.old 2> /dev/null > /dev/null
-mv -f /boot/System.map-%{alt_kernel} /boot/System.map-%{alt_kernel}.old 2> /dev/null > /dev/null
 ln -sf vmlinuz-%{kernel_release} /boot/vmlinuz-%{alt_kernel}
 ln -sf System.map-%{kernel_release} /boot/System.map-%{alt_kernel}
 if [ ! -e /boot/vmlinuz ]; then
-	mv -f /boot/vmlinuz /boot/vmlinuz.old 2> /dev/null > /dev/null
-	mv -f /boot/System.map /boot/System.map.old 2> /dev/null > /dev/null
 	ln -sf vmlinuz-%{kernel_release} /boot/vmlinuz
 	ln -sf System.map-%{alt_kernel} /boot/System.map
-	mv -f %{initrd_dir}/initrd %{initrd_dir}/initrd.old 2> /dev/null > /dev/null
 	ln -sf initrd-%{alt_kernel} %{initrd_dir}/initrd
 fi
 
 %depmod %{kernel_release}
 
 /sbin/geninitrd -f --initrdfs=rom %{initrd_dir}/initrd-%{kernel_release}.gz %{kernel_release}
-mv -f %{initrd_dir}/initrd-%{alt_kernel} %{initrd_dir}/initrd-%{alt_kernel}.old 2> /dev/null > /dev/null
 ln -sf initrd-%{kernel_release}.gz %{initrd_dir}/initrd-%{alt_kernel}
 
 if [ -x /sbin/new-kernel-pkg ]; then
@@ -611,7 +561,6 @@ elif [ -x /sbin/rc-boot ]; then
 fi
 
 %post vmlinux
-mv -f /boot/vmlinux-%{alt_kernel} /boot/vmlinux-%{alt_kernel}.old 2> /dev/null > /dev/null
 ln -sf vmlinux-%{kernel_release} /boot/vmlinux-%{alt_kernel}
 
 %post drm
