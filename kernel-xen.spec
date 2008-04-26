@@ -25,13 +25,23 @@
 %define		have_sound	1
 %define		have_drm	0
 
-%define		xen_version		3.2.0
+%define		xen_version		3.2
 
 %define		alt_kernel	xen
 
+# Our Kernel ABI, increase this when you want out of source modules being rebuilt
+%define		KABI		0
+
+# kernel release (used in filesystem and eventually in uname -r)
+# modules will be looked from /lib/modules/%{kernel_release}
+# _localversion is just that without version for "> localversion"
+%define		_localversion %{KABI}
+%define		kernel_release %{version}_%{alt_kernel}-%{_localversion}
+%define		_kernelsrcdir	/usr/src/linux-%{version}_%{alt_kernel}
+
 %define		_basever	2.6.18
 %define		_postver	.8
-%define		_rel		0.7
+%define		_rel		0.9
 %define		_ver		%{nil}
 
 Summary:	The Linux kernel (the core of the Linux operating system)
@@ -108,13 +118,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		srcdir		%{topdir}/linux-%{_basever}
 %define		objdir		%{topdir}/%{targetobj}
 %define		targetobj	%{_target_base_arch}-gcc-%(%{kgcc} -dumpversion)
-
-# kernel release (used in filesystem and eventually in uname -r)
-# modules will be looked from /lib/modules/%{kernel_release}%{?smp}
-# _localversion is just that without version for "> localversion"
-%define		_localversion %{release}
-%define		kernel_release %{version}_%{alt_kernel}-%{_localversion}
-%define		_kernelsrcdir	/usr/src/linux-%{version}_%{alt_kernel}
 
 %define		CommonOpts	HOSTCC="%{kgcc}" HOSTCFLAGS="-Wall -Wstrict-prototypes %{rpmcflags} -fomit-frame-pointer" AWK="gawk"
 %if "%{_target_base_arch}" != "%{_arch}"
