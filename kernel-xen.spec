@@ -23,6 +23,7 @@
 %define		have_pcmcia	1
 %define		have_oss	1
 %define		have_sound	1
+%define		have_drm	0
 
 %define		xen_version		3.2.0
 
@@ -504,7 +505,7 @@ fi
 ln -sf vmlinuz-%{kernel_release} /boot/vmlinuz-%{alt_kernel}
 ln -sf System.map-%{kernel_release} /boot/System.map-%{alt_kernel}
 if [ ! -e /boot/vmlinuz ]; then
-	ln -sf vmlinuz-%{kernel_release} /boot/vmlinuz
+	ln -sf vmlinuz-%{alt_kernel} /boot/vmlinuz
 	ln -sf System.map-%{alt_kernel} /boot/System.map
 	ln -sf initrd-%{alt_kernel} %{initrd_dir}/initrd
 fi
@@ -587,9 +588,9 @@ fi
 /lib/modules/%{kernel_release}/kernel/arch
 /lib/modules/%{kernel_release}/kernel/crypto
 /lib/modules/%{kernel_release}/kernel/drivers
-#%if %{have_oss} && %{have_isa}
-#%exclude /lib/modules/%{kernel_release}/kernel/drivers/media/radio/miropcm20*.ko*
-#%endif
+%if %{have_drm}
+%exclude /lib/modules/%{kernel_release}/kernel/drivers/char/drm
+%endif
 /lib/modules/%{kernel_release}/kernel/fs
 /lib/modules/%{kernel_release}/kernel/kernel
 /lib/modules/%{kernel_release}/kernel/lib
@@ -616,9 +617,17 @@ fi
 %ghost /lib/modules/%{kernel_release}/source
 %dir %{_sysconfdir}/modprobe.d/%{kernel_release}
 
+%ifarch alpha %{ix86} %{x8664} ppc ppc64 sparc sparc64
 %files vmlinux
 %defattr(644,root,root,755)
 /boot/vmlinux-%{kernel_release}
+%endif
+
+%if %{have_drm}
+%files drm
+%defattr(644,root,root,755)
+/lib/modules/%{kernel_release}/kernel/drivers/char/drm
+%endif
 
 %if %{have_pcmcia}
 %files pcmcia
@@ -684,6 +693,7 @@ fi
 
 %files doc
 %defattr(644,root,root,755)
+%dir %{_kernelsrcdir}
 %{_kernelsrcdir}/Documentation
 
 %if %{with source}
