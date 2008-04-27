@@ -41,7 +41,7 @@
 
 %define		_basever	2.6.18
 %define		_postver	.8
-%define		_rel		0.9
+%define		_rel		0.10
 %define		_ver		%{nil}
 
 Summary:	The Linux kernel (the core of the Linux operating system)
@@ -73,8 +73,8 @@ Source24:	kernel-xen-xen.config
 Patch0:		kernel-xen-xen.patch
 Patch1:		kernel-PATH_MAX.patch
 URL:		http://www.kernel.org/
-BuildRequires:	binutils >= 3:2.14.90.0.7
 BuildRequires:	%{kgcc_package} >= 5:3.2
+BuildRequires:	binutils >= 3:2.14.90.0.7
 BuildRequires:	module-init-tools
 # for hostname command
 BuildRequires:	net-tools
@@ -86,6 +86,7 @@ Requires:	/sbin/depmod
 Requires:	coreutils
 Requires:	geninitrd >= 2.57
 Requires:	module-init-tools >= 0.9.9
+Requires:	xen >= %{xen_version}
 Provides:	%{name}(vermagic) = %{kernel_release}
 Provides:	kernel(xen0) = %{xen_version}
 Conflicts:	e2fsprogs < 1.29
@@ -255,8 +256,8 @@ building kernel modules.
 
 %description headers -l de.UTF-8
 Dies sind die C Header Dateien für den Linux-Kernel, die definierte
-Strukturen und Konstante beinhalten, die beim rekompilieren des Kernels
-oder bei Kernel Modul kompilationen gebraucht werden.
+Strukturen und Konstante beinhalten, die beim rekompilieren des
+Kernels oder bei Kernel Modul kompilationen gebraucht werden.
 
 %description headers -l pl.UTF-8
 Pakiet zawiera pliki nagłówkowe jądra, niezbędne do rekompilacji jądra
@@ -519,15 +520,19 @@ fi
 ln -sf initrd-%{kernel_release}.gz %{initrd_dir}/initrd-%{alt_kernel}
 
 if [ -x /sbin/new-kernel-pkg ]; then
+	xen=$(readlink -f /boot/xen.gz)
+	xenver=${xen#/boot/xen-}
+	xenver=${xenver%.gz}
+
 	if [ -f /etc/pld-release ]; then
 		title=$(sed 's/^[0-9.]\+ //' < /etc/pld-release)
 	else
 		title='PLD Linux'
 	fi
 
-	title="$title %{alt_kernel}"
+	title="Xen $xenver / $title"
 
-	/sbin/new-kernel-pkg --initrdfile=%{initrd_dir}/initrd-%{kernel_release}.gz --install %{kernel_release} --banner "$title"
+	/sbin/new-kernel-pkg --multiboot=$xen --initrdfile=%{initrd_dir}/initrd-%{kernel_release}.gz --install %{kernel_release} --banner "$title"
 elif [ -x /sbin/rc-boot ]; then
 	/sbin/rc-boot 1>&2 || :
 fi
