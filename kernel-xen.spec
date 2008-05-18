@@ -10,9 +10,9 @@
 # kernel-xen-xen.patch was generated with:
 # - hg clone http://xenbits.xensource.com/xen-unstable.hg
 # - cd xen-unstable.hg
-# - make prep-kernels
+# - make prep-kernels AWK=gawk
 # - tar xvjf linux-2.6.y.z.tar.bz2
-# - diff burN linux-2.6.y.z 2.6.y.z-xen > kernel-xen-xen.patch
+# - diff -burN linux-2.6.y.z 2.6.y.z-xen > kernel-xen-xen.patch
 # with some minor tweaks afterwards
 #
 # Conditional build:
