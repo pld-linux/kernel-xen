@@ -7,6 +7,14 @@
 # - dom0 boots
 # - domU doesn't
 #
+# kernel-xen-xen.patch was generated with:
+# - hg clone http://xenbits.xensource.com/xen-unstable.hg
+# - cd xen-unstable.hg
+# - make prep-kernels
+# - tar xvjf linux-2.6.y.z.tar.bz2
+# - diff burN linux-2.6.y.z 2.6.y.z-xen > kernel-xen-xen.patch
+# with some minor tweaks afterwards
+#
 # Conditional build:
 %bcond_without	source		# don't build kernel-source package
 %bcond_with	verbose		# verbose build (V=1)
