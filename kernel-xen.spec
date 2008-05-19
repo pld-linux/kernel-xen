@@ -1,7 +1,7 @@
 #
 # TODO:
 # - port grsec_minimal
-# - legal stuff ( http://www.xensource.com/Pages/legal.aspx )
+# - legal stuff <http://www.xensource.com/Pages/legal.aspx>
 #
 # Status:
 # - dom0 boots
@@ -11,8 +11,10 @@
 # - hg clone http://xenbits.xensource.com/xen-unstable.hg
 # - cd xen-unstable.hg
 # - make prep-kernels AWK=gawk
-# - tar xvjf linux-2.6.y.z.tar.bz2
-# - diff -burN linux-2.6.y.z 2.6.y.z-xen > kernel-xen-xen.patch
+# - check what version the xen source is against by peeking into linux-2.6.x.y-xen/Makefile
+# - tar xvjf linux-2.6.x.tar.bz2
+# - (optional bzcat patch-2.6.x.y.bz2 | patch -p1)
+# - diff -burN -x '.hg*' linux-2.6.y.z 2.6.y.z-xen > kernel-xen-xen.patch
 # with some minor tweaks afterwards
 #
 # Conditional build:
@@ -49,7 +51,7 @@
 
 %define		_basever	2.6.18
 %define		_postver	.8
-%define		_rel		0.10
+%define		_rel		0.11
 %define		_ver		%{nil}
 
 Summary:	The Linux kernel (the core of the Linux operating system)
@@ -77,7 +79,7 @@ Source21:	kernel-xen-i386.config
 Source22:	kernel-xen-x86_64.config
 Source23:	kernel-xen-netfilter.config
 Source24:	kernel-xen-xen.config
-# from xen-unstable.hg
+# http://xenbits.xensource.com/linux-2.6.18-xen.hg diff against 2.6.18.8
 Patch0:		kernel-xen-xen.patch
 Patch1:		kernel-PATH_MAX.patch
 URL:		http://www.kernel.org/
